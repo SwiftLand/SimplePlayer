@@ -17,7 +17,7 @@ struct ListView: View {
     
     var body: some View {
         VStack(alignment:.center){
-
+            
             URLInputView(inputPath: $inputPath){
                 
                 isPlayerPresented = true
@@ -26,15 +26,18 @@ struct ListView: View {
                 Spacer()
                 ZStack{
                     
-                    //            List(viewModel.data) { item in
-                    //                ListCellView(data: item)
-                    //                    .frame(maxWidth:.infinity)
-                    //                    .frame(height:store.orientation.isLandscape ? 150 : 100)
-                    //                    .onTapGesture {
-                    //                        self.viewModel.selectItem(with: item)
-                    //                    }
-                    //            }.listStyle(PlainListStyle())
-                    
+                    List {
+                        ForEach(viewModel.watchHistory, id: \.id) { item in
+                            ListCellView(data: item)
+                                .frame(maxWidth:.infinity)
+                                .frame(height:store.orientation.isLandscape ? 150 : 100)
+                                .onTapGesture {
+                                    //                                            self.viewModel.selectItem(with: item)
+                                }
+                        }.onDelete(perform: {_ in })
+                      
+                    }.listStyle(PlainListStyle())
+                        
                     switch viewModel.status{
                         
                     case .loading:
@@ -61,10 +64,10 @@ struct ListView: View {
                 }
                 Spacer()
             }
-        
+            
         }
         .modifier(VideoPlayerModifier(isPlayerPresented: $isPlayerPresented, path: $inputPath))
-
+        
     }
 }
 

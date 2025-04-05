@@ -12,7 +12,8 @@ final class ListViewModel:ObservableObject,NavigableProtocol{
 
     var navigate: PassthroughSubject<FlowAction, Never> = .init()
 
-    @Published var status: LoadStatus?
+    @Published var watchHistory:[WatchHistory] = UserData.getWatchHistory()
+    @Published var status: LoadStatus? = nil
     
     private var cancellable = Set<AnyCancellable>()
   
