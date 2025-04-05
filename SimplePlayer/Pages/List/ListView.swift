@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ListView: View {
     
-    @State var inputPath:String = "https://www.sample-videos.com/video321/mp4/720/big_buck_bunny_720p_5mb.mp4"
+    @State var inputPath:String = "https://www.sample-videos.com/video321/mp4/720/big_buck_bunny_720p_5mb.mp4" //TODO: must remove
     @State var showList:Bool = false
     @State var isPlayerPresented:Bool = false
     @StateObject var viewModel:ListViewModel
@@ -47,18 +47,14 @@ struct ListView: View {
                         
                     case .error(let error):
                         VStack{
-                            Image(systemName:ImageResources.getName(for: .error_icon))
-                                .resizable()
-                                .foregroundColor(.red)
-                                .frame(width:40,height: 40)
+                            ErrorIconView()
                             Text(StringResource.getMessage(for: error))
                         }
                         
                     default:
                         VStack(spacing:16){
-                            //                    Image(uiImage: ImageResources.getImage(for: .magnifying_glass)).resizable()
-                            //                        .frame(width:40,height: 40)
-                            Text("type some thing in upper search bar")
+                            LinkPlayIconView()
+                            Text(StringResource.get(.init_message))
                         }
                     }
                     
@@ -77,4 +73,3 @@ struct ListView_Previews: PreviewProvider {
         ListView(viewModel: ListViewModel())
     }
 }
-

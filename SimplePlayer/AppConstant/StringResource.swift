@@ -8,12 +8,10 @@
 import Foundation
 
 enum StringResource:String {
-    case done = "Done"
-    case unkown = "Unkown"
-    case retry = "Retry"
     case error = "Error"
     case loading = "Loading"
     case error_message = "Error occurred,code:"
+    case init_message = "Got a link? Paste it and press done to play!"
     
    static func `get` (_ item:StringResource)->String{
         //will be localized here

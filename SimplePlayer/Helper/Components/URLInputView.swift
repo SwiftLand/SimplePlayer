@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+
 struct URLInputView: View {
     @Binding var inputPath: String
     var handleURLSubmit:()->()
@@ -22,6 +23,7 @@ struct URLInputView: View {
                 .disableAutocorrection(true)
                 .focused($isFocused)
                 .textContentType(.URL)
+                .submitLabel(.done)
                 .onSubmit(handleURLSubmit)
         }
         .padding()
