@@ -8,20 +8,24 @@ import SwiftUI
 import UIKit
 
 struct VideoPlayerModifier: ViewModifier {
-    
+
     @Binding var isPlayerPresented: Bool
-    @Binding var path: String
+    @Binding var data: PlayData?
     
     func body(content: Content) -> some View {
-        content.fullScreenCover(
-            isPresented: $isPlayerPresented,
-            content: {
-                ZStack(alignment: .topLeading) {
-                    if !path.isEmpty {
-                        VideoPlayerView(url: .init(string: path)!)
+        if let data = data {
+            content.fullScreenCover(
+                isPresented: $isPlayerPresented,
+                content: {
+                    ZStack(alignment: .topLeading) {
+                     
+                        VideoPlayerView(url: data.url,latestPosition: data.latestPostion)
+                        
                     }
                 }
-            }
-        )
+            )
+        }else{
+            content
+        }
     }
 }

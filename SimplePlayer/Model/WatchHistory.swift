@@ -11,8 +11,6 @@ struct WatchHistory:Codable,Equatable,Identifiable{
     let url:URL
     var latestPostion:TimeInterval
     var totalDuration:TimeInterval?
-    var totalSize:Int64?
-    var type:String?
     let createDate:Date
     var modifyDate:Date
     
@@ -33,8 +31,4 @@ struct WatchHistory:Codable,Equatable,Identifiable{
           self.createDate = createDate
           self.modifyDate = modifyDate
       }
-    
-    static func ==(lhs:WatchHistory,rhs:WatchHistory)->Bool{
-        return lhs.url == rhs.url
-    }
 }

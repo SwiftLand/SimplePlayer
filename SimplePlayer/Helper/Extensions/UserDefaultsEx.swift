@@ -17,16 +17,17 @@ extension Notification.Name {
 }
 
 
-struct UserData{
+extension UserDefaults{
     static func set(watchHistory: WatchHistory, needNotify: Bool = true) {
-        var history = UserData.getWatchHistory()
+        var history = UserDefaults.getWatchHistory()
 
-        if let index = history.firstIndex(of: watchHistory) {
+        if let index = history.firstIndex(where: {$0.id == watchHistory.id}) {
             // Update the existing record (preserve createDate, update modifyDate)
             var existing = history[index]
             existing.latestPostion = watchHistory.latestPostion
             existing.totalDuration = watchHistory.totalDuration
             existing.modifyDate = watchHistory.modifyDate
+            
             history[index] = existing
         } else {
             // Insert new record

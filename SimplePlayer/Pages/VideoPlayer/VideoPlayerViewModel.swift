@@ -16,26 +16,52 @@ final class VideoPlayerViewModel:NSObject,ObservableObject,NavigableProtocol{
     
     private var cancellables = Set<AnyCancellable>()
     private(set) var player:AVPlayer!
+    private(set) var started = false
+    
     let url:URL
     
-    init(url:URL) {
+    init(url:URL,latestPostion:TimeInterval? = nil) {
         self.url = url
         self.player = AVPlayer(url: url)
+        
+        if let latestPostion {
+            self.player.seek(to: .init(seconds: latestPostion, preferredTimescale: 1))
+        }
         
         super.init()
         
         self.subscribePlayerStateChanges()
     }
     
-    func subscribePlayerStateChanges(){
-
+    func saveLatestPostion(){
+        UserDefaults.set(watchHistory: .init(url: url,
+                                             latestPostion: player.currentTime().seconds,
+                                             totalDuration: player.currentItem?.duration.seconds))
+    }
+    
+    private func subscribePlayerStateChanges(){
+        
         player .publisher(for: \.timeControlStatus)
             .removeDuplicates()
+            .filter {[weak self] status in
+                guard let self else { return false }
+                // Ignore initial `.paused`, then start observing
+                if self.started == false {
+                    if status == .paused {
+                        return false // Skip first `.paused`
+                    } else {
+                        self.started = true
+                        return true  // Emit first `.playing` or `.waiting`
+                    }
+                } else {
+                    return true // From now on, emit everything
+                }
+            }
             .sink {[weak self] status in
                 guard let self else {return}
                 switch status {
                 case .playing,.paused:
-                    UserData.set(watchHistory: .init(url: self.url, latestPostion: self.player.currentTime().seconds))
+                    self.saveLatestPostion()
                 default:break
                 }
             }

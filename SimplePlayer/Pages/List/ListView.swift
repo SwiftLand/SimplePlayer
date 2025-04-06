@@ -9,9 +9,10 @@ import SwiftUI
 
 struct ListView: View {
     
-    @State var inputPath:String = "https://www.sample-videos.com/video321/mp4/720/big_buck_bunny_720p_5mb.mp4" //TODO: must remove
+    @State var inputPath:String = ""
     @State var showList:Bool = false
     @State var isPlayerPresented:Bool = false
+    @State var playData:PlayData? = nil
     @StateObject var viewModel:ListViewModel
     @EnvironmentObject var store: Store
     
@@ -19,55 +20,52 @@ struct ListView: View {
         VStack(alignment:.center){
             
             URLInputView(inputPath: $inputPath){
+                guard let url = URL(string: inputPath) else { return } //TODO pop error
+                openPlayer(url)
                 
-                isPlayerPresented = true
-            }
+            }.padding(.top,16)
+            
             VStack{
                 Spacer()
                 ZStack{
-                    
-                    List {
-                        ForEach(viewModel.watchHistory, id: \.id) { item in
-                            ListCellView(data: item)
-                                .frame(maxWidth:.infinity)
-                                .frame(height:store.orientation.isLandscape ? 150 : 100)
-                                .onTapGesture {
-                                    //                                            self.viewModel.selectItem(with: item)
-                                }
-                        }.onDelete(perform: {_ in })
-                      
-                    }.listStyle(PlainListStyle())
-                        
-                    switch viewModel.status{
-                        
-                    case .loading:
-                        ProgressView(){
-                            Text(StringResource.get(.loading))
-                        }.scaleEffect(1.5, anchor: .center)
-                        
-                    case .fetched:
-                        EmptyView()
-                        
-                    case .error(let error):
-                        VStack{
-                            ErrorIconView()
-                            Text(StringResource.getMessage(for: error))
-                        }
-                        
-                    default:
+                    if viewModel.watchHistory.isEmpty {
                         VStack(spacing:16){
                             LinkPlayIconView()
                             Text(StringResource.get(.init_message))
                         }
+                    }else{
+                        List {
+                            ForEach(viewModel.watchHistory, id: \.id) { item in
+                                ListCellView(data: item)
+                                    .frame(maxWidth:.infinity)
+                                    .onTapGesture {
+                                        openPlayer(item.url,latestPostion: item.latestPostion)
+                                    }
+                            }.onDelete(perform: {indexs in
+                                for index in indexs{
+                                    let item = viewModel.watchHistory[index]
+                                    UserDefaults.removeWatchHistory(url: item.url, needNotify: true)
+                                }
+                            })
+                            
+                        }.listStyle(PlainListStyle())
+                        
                     }
-                    
                 }
                 Spacer()
-            }
+            }.padding(.top,8)
             
         }
-        .modifier(VideoPlayerModifier(isPlayerPresented: $isPlayerPresented, path: $inputPath))
+        .modifier(VideoPlayerModifier(isPlayerPresented: $isPlayerPresented, data: $playData))
+        .onAppear(perform: viewModel.onAppear)
         
+    }
+    
+    private func openPlayer(_ url:URL,latestPostion:TimeInterval? = nil){
+        playData = .init(url:url)
+        withAnimation{
+            isPlayerPresented = true
+        }
     }
 }
 

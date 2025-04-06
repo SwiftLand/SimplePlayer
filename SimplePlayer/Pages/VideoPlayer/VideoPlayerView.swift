@@ -11,9 +11,9 @@ struct VideoPlayerView:View {
     let url: URL
     @StateObject var viewModel:VideoPlayerViewModel
     
-    init(url: URL) {
+    init(url: URL,latestPosition:TimeInterval? = nil) {
         self.url = url
-        self._viewModel = .init(wrappedValue: .init(url: url))
+        self._viewModel = .init(wrappedValue: .init(url: url,latestPostion: latestPosition))
     }
     
     var body: some View {
@@ -21,6 +21,9 @@ struct VideoPlayerView:View {
             .ignoresSafeArea(.all)
             .onAppear{
                 viewModel.player.play()
+            }
+            .onDisappear {
+                viewModel.saveLatestPostion()
             }
     }
 }
