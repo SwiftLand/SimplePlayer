@@ -62,7 +62,7 @@ struct ListView: View {
     }
     
     private func openPlayer(_ url:URL,latestPostion:TimeInterval? = nil){
-        playData = .init(url:url)
+        playData = .init(url:url,latestPostion: latestPostion)
         withAnimation{
             isPlayerPresented = true
         }

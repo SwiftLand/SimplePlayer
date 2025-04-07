@@ -25,7 +25,7 @@ final class VideoPlayerViewModel:NSObject,ObservableObject,NavigableProtocol{
         self.player = AVPlayer(url: url)
         
         if let latestPostion {
-            self.player.seek(to: .init(seconds: latestPostion, preferredTimescale: 1))
+            self.player.seek(to:.init(seconds: latestPostion, preferredTimescale: 1), toleranceBefore: .zero, toleranceAfter: .zero)
         }
         
         super.init()
